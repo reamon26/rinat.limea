@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="Limea_nichost">
+    <serverData>
+      <paths name="Limea_nichost">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/rinat.limea.ru/docs" local="$PROJECT_DIR$" web="rinat.limea" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
