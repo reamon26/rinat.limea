@@ -1,12 +1,15 @@
 <?php
-# Client's information
-$new_campaign_login = 'reamon26limea';
-$new_campaign_email = 'reamon26limea@yandex.ru';
-
 # подключаем библиотеку NuSOAP
 require_once 'lib/nusoap.php';
+
+
 # авторизационный токен
-$token = '8675635ad28343de86387685e0791ef4';
+//$token = '5d3654273c0748bd8a92570f9785b1cc';
+include ("php/db.php");
+$result_token = mysql_query("SELECT token FROM users WHERE login='$_SESSION[login]' AND password='$_SESSION[password]'");
+$myrow_token = mysql_fetch_array($result_token);
+$token = $myrow_token[0];
+
 # локаль
 $locale = 'ru';
 # путь к WSDL
@@ -24,17 +27,4 @@ $headers =
      <locale>$locale</locale>";
 $client->setHeaders($headers);
 
-
-
-
-/*
-# Initializing soap object
-$wsdlurl = 'https://api.direct.yandex.ru/v4/wsdl/';
-$client = new nusoap_client($wsdlurl, 'wsdl');
-$client->authtype = 'certificate';
-$client->decode_utf8 = 0;
-$client->soap_defencoding  = 'UTF-8';
-$client->certRequest['sslcertfile'] = $cert;
-$client->certRequest['sslkeyfile']  = $private;
-$client->certRequest['cainfofile']  = $cacert;*/
 ?>

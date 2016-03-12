@@ -3,7 +3,7 @@
 <div class="row">
     <div class="col-md-4">
         <div class="panel-group" id="accordion">
-            <form id="new_phrase" action="http://limea.ru/planning" method="post"></form>
+            <form id="new_phrase" action="http://rinat.limea.ru/planning" method="post"></form>
             <div class="contaner-textarea-keywords ">
                 <?
                 //if ((isset($_POST[go_to_planing_from_collect])) && ($_POST[go_to_planing_from_collect] != "")){?>
@@ -18,7 +18,7 @@
                 if (isset($_POST[request_new_get_ws])&&($_POST[request_new_get_ws]!=""))
                   if (isset($_POST[request_new_get_ws])){
                       $newzapros = $_POST[request_new_get_ws];
-                      $newtext = split_mas_10($newzapros);
+                      $newtext = array_chunk($newzapros,100);
                       print_r($newtext);
                   }
                     function split_mas_10($newzapros) {
@@ -50,51 +50,116 @@
         </div>
     </div>
     <div class="col-md-8">
-
         <div class="row">
-            <canvas id="canvas" height="450" width="600"></canvas>
+<pre><?php
+$data_bid_sum = $data[$data_bid_sum];
+    print_r($data_bid_sum);
+            ?>
+            </pre>
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th rowspan="2">Запрос</th>
+                    <!--<th colspan="5">Ставка</th>-->
+                    <th colspan="5">Цена за клик</th>
+                    <th colspan="5">Количество кликов</th>
+                </tr>
+                <tr>
+                    <!-- для ставки
+                    <th>1-й спец</th>
+                    <th>2-й спец</th>
+                    <th>3-й спец</th>
+                    <th>1-я гар</th>
+                    <th>гар</th>
+                    -->
+                    <th>1-й спец</th>
+                    <th>2-й спец</th>
+                    <th>3-й спец</th>
+                    <th>1-я гар</th>
+                    <th>гар</th>
+                    <th>1-й спец</th>
+                    <th>2-й спец</th>
+                    <th>3-й спец</th>
+                    <th>1-я гар</th>
+                    <th>гар</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?
+                $data_bid = $data[data_bid];
+                if (isset($data_bid)) {
+                    foreach ($data_bid as $value0) {
+                        echo '<tr>';
+                        echo '<td>' . $value0[phrase] . '</td>';
+                        //foreach ($value0[bid] as $bid)
+                        //    echo '<td>' . $bid. '</td>';
+
+                        foreach ($value0[price] as $price)
+                            echo '<td>' . $price . '</td>';
+                        foreach ($value0[clicks] as $clicks)
+                            echo '<td>' . $clicks . '</td>';
+                        echo '</tr>';
+                    }
+                }
+                ?>
+                </tbody>
+            </table>
+
+            <canvas id="canvas1" height="450" width="600"></canvas>
+            <script>
+                var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+                var lineChartData = {
+                    labels : [
+                        <?
+                        $data_bid_sum = $data[data_bid_sum];
+                        echo '"0", ';
+                        foreach ($data_bid_sum[3] as $cpc_min) {
+                            echo '"'.$cpc_min.'",';
+                        }
+                        ?>
+                    ],
+                    datasets : [
+                        {
+                            label: "My First dataset",
+                            fillColor : "rgba(220,220,220,0.2)",
+                            strokeColor : "rgba(220,220,220,1)",
+                            pointColor : "rgba(220,220,220,1)",
+                            pointStrokeColor : "#fff",
+                            pointHighlightFill : "#fff",
+                            pointHighlightStroke : "rgba(220,220,220,1)",
+                            data : [
+                                <?
+                                    $data_bid_sum = $data[data_bid_sum];
+                                    foreach ($data_bid_sum[1] as $clicks_sum) {
+                                        echo $clicks_sum.',';
+                                    }
+                                ?>
+                            ]
+                        }
+                        /*,
+                         {
+                         label: "My Second dataset",
+                         fillColor : "rgba(151,187,205,0.2)",
+                         strokeColor : "rgba(151,187,205,1)",
+                         pointColor : "rgba(151,187,205,1)",
+                         pointStrokeColor : "#fff",
+                         pointHighlightFill : "#fff",
+                         pointHighlightStroke : "rgba(151,187,205,1)",
+                         data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
+                         }
+                         */
+                    ]
+                }
+                window.onload = function(){
+                    var ctx = document.getElementById("canvas1").getContext("2d");
+                    window.myLine = new Chart(ctx).Line(lineChartData, {
+                        responsive: true
+                    });
+                }
+            </script>
+
+
         </div>
-
     </div>
-
-
 </div>
 
-<script>
-    var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
-    var lineChartData = {
-        labels : ["January","February","March","April","May","June","July"],
-        datasets : [
-            {
-                label: "My First dataset",
-                fillColor : "rgba(220,220,220,0.2)",
-                strokeColor : "rgba(220,220,220,1)",
-                pointColor : "rgba(220,220,220,1)",
-                pointStrokeColor : "#fff",
-                pointHighlightFill : "#fff",
-                pointHighlightStroke : "rgba(220,220,220,1)",
-                data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
-            },
-            {
-                label: "My Second dataset",
-                fillColor : "rgba(151,187,205,0.2)",
-                strokeColor : "rgba(151,187,205,1)",
-                pointColor : "rgba(151,187,205,1)",
-                pointStrokeColor : "#fff",
-                pointHighlightFill : "#fff",
-                pointHighlightStroke : "rgba(151,187,205,1)",
-                data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
-            }
-        ]
-
-    }
-
-    window.onload = function(){
-        var ctx = document.getElementById("canvas").getContext("2d");
-        window.myLine = new Chart(ctx).Line(lineChartData, {
-            responsive: true
-        });
-    }
-
-
-</script>

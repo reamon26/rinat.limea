@@ -30,50 +30,54 @@ class Model_Collect extends Model
 			return $text;
 		}
 
-		require_once 'application/models/lib/autorization_yandex.php';
+		require 'application/models/lib/autorization_yandex.php';
 		//Создание отчета
 		//$id_report_test = $client->call("CreateNewWordstatReport", array("params" => array('Phrases' => array("тестестест"), 'GeoID' => array(225))));
 		//$delete_report_1 = $client->call("DeleteWordstatReport", array("params" => $id_report_test));
 
-		if ($id_report_test[faultcode]=="SOAP-ENV:56") {
-			$text_report_all= "56";
-		} else {
-			if ((isset($_POST[request_new_get_ws]))&&($_POST[request_new_get_ws]!="")) {
-				$text_10_for_report = split_mas_10($_POST[request_new_get_ws]);
-				//$text_10_for_report_d = $text_10_for_report[0];
-				$fp = fopen('temp.csv', 'w');
-				$i_N_10=0;
-				if ((isset($_POST[request_new_get_ws_geo]))&&($_POST[request_new_get_ws_geo]!="")) {
-					$geo = explode(",",$_POST[request_new_get_ws_geo]);
-				}
-				else {
-					$geo =array(225);
-				}
-				if ((isset($_POST[request_new_get_ws_freq]))&&($_POST[request_new_get_ws_freq]!="")) {
-					$freq = $_POST[request_new_get_ws_freq];
-				}
-				else {
-					$freq =0;
-				}
 
-				foreach ($text_10_for_report as $text_10_for_report_d) {
-					$create_report_params = array(
-						'Phrases' => $text_10_for_report_d,//array("купить квартиру"),
-						'GeoID' => $geo
-					);
-					$id_report = $client->call("CreateNewWordstatReport", array("params" => $create_report_params));
+		if ((isset($_POST[request_new_get_ws]))&&($_POST[request_new_get_ws]!="")) {
+			$text_10_for_report = split_mas_10($_POST[request_new_get_ws]);
+			//$text_10_for_report_d = $text_10_for_report[0];
+			$fp = fopen('temp.csv', 'w');
+			$i_N_10=0;
 
-					//Получение списка отчетов
-					$report_list = $client->call("GetWordstatReportList");
+			//проверка на ввод ГЕО, по умолчанию весь мир.
+			if ((isset($_POST[request_new_get_ws_geo]))&&($_POST[request_new_get_ws_geo]!=""))
+				$geo = explode(",",$_POST[request_new_get_ws_geo]);
+			else $geo =array(225);
 
+			//проверка на частоту, по умолчанию 0.
+			if ((isset($_POST[request_new_get_ws_freq]))&&($_POST[request_new_get_ws_freq]!=""))
+				$freq = $_POST[request_new_get_ws_freq];
+			else $freq =0;
+
+			//В цикле пропускаем массивы по 10 через WordstatReport
+			foreach ($text_10_for_report as $text_10_for_report_d) {
+				$create_report_params = array(
+					'Phrases' => $text_10_for_report_d,//array("купить квартиру"),
+					'GeoID' => $geo
+				);
+				$id_report = $client->call("CreateNewWordstatReport", array("params" => $create_report_params));
+				print_r($id_report);
+
+				//Получение списка отчетов
+				$report_list = $client->call("GetWordstatReportList");
+
+				//Проверка на случай, если вдруг будет ошибка в авторизации, чтобы избежать зацикливания.
+				if ($report_list[faultcode]=="SOAP-ENV:58"){
+					echo "<pre>";
+					print_r($report_list);
+					echo "</pre>";
+				} else {
 					//Информация по отчету
-					$z = 0;
-					while ($z != 1) {
+					$z = false;
+					while ($z == false) {
 						foreach ($report_list as $key1 => $value1) {
 							//echo "$value1[StatusReport] = $value1[ReportID] или $id_report<br>";
 							if ($value1[ReportID] == $id_report) {
 								if ($value1[StatusReport] == "Done") {
-									$z = 1;
+									$z = true;
 								} else {
 									$report_list = $client->call("GetWordstatReportList");
 									sleep(1);
@@ -83,22 +87,20 @@ class Model_Collect extends Model
 							}
 						}
 					}
+
 					//Получение информации по отчету
 					$text_report = $client->call("GetWordstatReport", array("params" => $id_report));
 					$i_N = 1;
 
+					//Запись в файл
+					//Нужно будет заменить на сохранение в базу данных
 					foreach ($text_report as $keywords) {
-						//$j = 1;
-						//$z_buf=FALSE;
-						//if ($z_buf==TRUE) {
 						foreach ($keywords[SearchedWith] as $keywords_one) {
 							if ($keywords_one[Shows]>$freq){
-								//echo '<tr><td>' . $j++ . '</td><td>' . $keywords_one[Phrase] . '</td><td>' . $keywords_one[Shows] . '</td></tr>';
 								fputcsv($fp, array(mb_convert_encoding($keywords_one[Phrase], 'WINDOWS-1251', 'UTF-8'), $keywords_one[Shows]), $delimiter = ";");
 							}
 						}
 						$i_N++;
-						//}else $z_buf=TRUE;
 					}
 					//Удаление отчета
 					$delete_report_1 = $client->call("DeleteWordstatReport", array("params" => $id_report));
@@ -106,10 +108,10 @@ class Model_Collect extends Model
 					$text_report_all[$i_N_10] = $text_report;
 					$i_N_10++;
 				}
-				fclose($fp);
 			}
+			fclose($fp);
 		}
-		// Здесь мы просто сэмулируем реальные данные.
+
 		return $text_report_all;
 	}
 }

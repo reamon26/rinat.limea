@@ -11,13 +11,14 @@ class Model_Cabinet extends Model
             //заносим введенный пользователем пароль в переменную $password, если он пустой, то уничтожаем переменную
         if (empty($login) or empty($password)) //если пользователь не ввел логин или пароль, то выдаем ошибку и останавливаем скрипт
         {
-            exit ("Вы ввели не всю информацию, вернитесь назад и заполните все поля!");
+            return "Вы ввели не всю информацию, вернитесь назад и заполните все поля!";
         }
-            //если логин и пароль введены,то обрабатываем их, чтобы теги и скрипты не работали, мало ли что люди могут ввести
-            $login = stripslashes($login);
-            $login = htmlspecialchars($login);
+
+        //если логин и пароль введены,то обрабатываем их, чтобы теги и скрипты не работали, мало ли что люди могут ввести
+        $login = stripslashes($login);
+        $login = htmlspecialchars($login);
         $password = stripslashes($password);
-            $password = htmlspecialchars($password);
+        $password = htmlspecialchars($password);
 
         //удаляем лишние пробелы
         $login = trim($login);
@@ -25,7 +26,7 @@ class Model_Cabinet extends Model
 
         // заменяем новым********************************************
         // подключаемся к базе
-        include ("bd.php");// файл bd.php должен быть в той    же папке, что и все остальные, если это не так, то просто измените путь
+        include ("php/db.php");// файл bd.php должен быть в той    же папке, что и все остальные, если это не так, то просто измените путь
         // минипроверка на подбор паролей
 
         $ip=getenv("HTTP_X_FORWARDED_FOR");
@@ -87,8 +88,8 @@ class Model_Cabinet extends Model
 
         //echo    ' value="'.$_COOKIE['password'].'">';
         //echo "<html><head><meta    http-equiv='Refresh' content='0;    URL=index.php'></head></html>";//перенаправляем пользователя на главную страничку, там    ему и сообщим об удачном входе
-        $text = "ok";
-        return $text;
+        //$text = "ok";
+        //return $text;
 
 
     }

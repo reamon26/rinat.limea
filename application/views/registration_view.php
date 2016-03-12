@@ -41,6 +41,7 @@ $password    = $password."reamon26";
 echo "<br>".$password."<br>";
 // подключаемся к базе
 require_once ("php/db.php");// файл db.php должен быть в той же папке, что и все остальные, если это не так, то просто измените путь
+include ("php/db.php");
 // проверка на существование пользователя с таким же логином
 $result = mysql_query("SELECT id FROM users WHERE login='$login'",$db);
 $myrow = mysql_fetch_array($result);

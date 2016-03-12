@@ -27,7 +27,7 @@
             </label>
     </div>
     -->
-    <form id="new_phrase" action="http://limea.ru/collect" method="post">
+    <form id="new_phrase" action="/collect" method="post">
 
       </form>
         <div class="contaner-textarea-keywords ">
@@ -1090,7 +1090,7 @@ if ($data!="56") {
 //print_r($data);
 
         ?>
-        <form action="http://limea.ru/planning" method="post" >
+        <form action="/planning" method="post" >
             <textarea class="form-control" name="go_to_planing_from_collect" style="display:none;"><?
                 foreach($stack as $value) {
                     echo "$value \n";

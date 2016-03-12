@@ -1,16 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: reamon26
- * Date: 11.10.15
- * Time: 22:49
- */
 
-class Model_planning extends Model
+class Model_Planning extends Model
 {
     public function get_data()
     {
-        function split_mas_10($newzapros)
+
+        function split_mas_100($newzapros)
         {
             $newzapros1 = array_unique(explode("\n",$newzapros));
             for ($i = 1; $i <= count($newzapros1); $i++){
@@ -36,74 +31,157 @@ class Model_planning extends Model
             return $text;
         }
 
-        require_once 'application/models/lib/autorization_yandex.php';
-        //Создание отчета
-        //$id_report_test = $client->call("CreateNewForecast", array("params" => array('Phrases' => array("тестестест"), 'GeoID' => array(225))));
-        //$delete_report_1 = $client->call("DeleteForecastReport", array("params" => $id_report_test));
+        require 'application/models/lib/autorization_yandex.php';
 
-        //if ($id_report_test[faultcode]=="SOAP-ENV:56") {
-        //    $text_report_all= "56";
-        //} else {
-            if ((isset($_POST[request_new_get_ws]))&&($_POST[request_new_get_ws]!="")) {
-                $text_10_for_report = split_mas_10($_POST[request_new_get_ws]);
-                //$text_10_for_report_d = $text_10_for_report[0];
-                //$fp = fopen('temp.csv', 'w');
-                $i_N_10=0;
-                foreach ($text_10_for_report as $text_10_for_report_d) {
-                    $create_report_params = array(
-                        'Phrases' => $text_10_for_report_d,//array("купить квартиру"),
-                        'GeoID' => array(225)
-                    );
-                    $id_report = $client->call("CreateNewForecast", array("params" => $create_report_params));
 
-                    //Получение списка отчетов
-                    $report_list = $client->call("GetForecastList");
+        if (isset($_POST[request_new_get_ws])&&($_POST[request_new_get_ws]!="")) {
 
-                    //Информация по отчету
-                    $z = 0;
-                    while ($z != 1) {
-                        foreach ($report_list as $key1 => $value1) {
-                            //echo "$value1[StatusReport] = $value1[ReportID] или $id_report<br>";
-                            if ($value1[ReportID] == $id_report) {
-                                if ($value1[StatusReport] == "Done") {
-                                    $z = 1;
-                                } else {
-                                    $report_list = $client->call("GetForecastList");
-                                    sleep(1);
-                                }
+            $newzapros = $_POST[request_new_get_ws];
+            $newtext = split_mas_100($newzapros);
+
+
+            //print_r($newtext[0]);
+
+
+
+
+            require 'application/models/lib/autorization_yandex.php';
+
+            $create_report_params = array(
+                'Phrases' => $newtext[0],
+                'GeoID' => array(225),
+                "Currency"=> "RUB",
+                "AuctionBids"=> "Yes"
+            );
+
+            //print_r($create_report_params);
+
+
+            $id_report = $client->call("CreateNewForecast", array("params" => $create_report_params));
+
+            //Получение списка отчетов
+            $report_list = $client->call("GetForecastList");
+
+
+            $test_delete = $client->call("DeleteForecastReport", array("params" => 123445));
+            //print_r($test_delete);
+            if ($report_list[faultcode]=="SOAP-ENV:58"){
+                echo "<pre>";
+                print_r($report_list);
+                echo "</pre>";
+            } else {
+
+                $z = false;
+                while ($z == false) {
+                    foreach ($report_list as $value1) {
+                        if ($value1[ForecastID] == $id_report) {
+
+                            if ($value1[StatusForecast] == "Done") {
+                                $value_ReportID = $value1[ForecastID];
+                                $z = true;
                             } else {
-                                $client->call("DeleteWordstatReport", array("params" => $value1[ReportID]));
+                                $report_list = $client->call("GetForecastList");
+                                sleep(1);
                             }
+                        } else {
+                            $client->call("DeleteForecastReport", array("params" => $value1[ForecastID]));
                         }
                     }
-                    //Получение информации по отчету
-                    $text_report = $client->call("GetForecast", array("params" => $id_report));
-                    $i_N = 1;
-                    print_r($text_report);
-/*
-                    foreach ($text_report as $keywords) {
-                        //$j = 1;
-                        //$z_buf=FALSE;
-                        //if ($z_buf==TRUE) {
-                        foreach ($keywords[SearchedWith] as $keywords_one) {
-                            //echo '<tr><td>' . $j++ . '</td><td>' . $keywords_one[Phrase] . '</td><td>' . $keywords_one[Shows] . '</td></tr>';
-                            fputcsv($fp, array(mb_convert_encoding($keywords_one[Phrase], 'WINDOWS-1251', 'UTF-8'), $keywords_one[Shows]), $delimiter = ";");
-                        }
-                        $i_N++;
-                        //}else $z_buf=TRUE;
-                    }
-
-*/
-                    //Удаление отчета
-                    $delete_report_1 = $client->call("DeleteWordstatReport", array("params" => $id_report));
-                    //if ($delete_report_1 == 1) echo "<br> <br><br>delete report result id=".$id_report;
-                    $text_report_all[$i_N_10] = $text_report;
-                    $i_N_10++;
                 }
-                //fclose($fp);
             }
-        //}
-        // Здесь мы просто сэмулируем реальные данные.
-        return $text_report_all;
+
+
+
+
+            //Получение списка отчетов
+            $report_list = $client->call("GetForecastList");
+            //print_r($report_list);
+
+            //Получение информации по отчету
+            $text_report = $client->call("GetForecast", array("params" => $id_report));
+            $phrases = $text_report["Phrases"];
+
+
+            //print_r($text_report);
+            //print_r($phrases);
+
+
+
+            foreach ($phrases as $key => $phrase) {
+                $AuctionBids = $phrase[AuctionBids];
+                $data_bid[$key] = array(
+                    "phrase" => $phrase[Phrase],
+                    "bid" => array(
+                        "1" => $AuctionBids[0][Bid],
+                        "2" => $AuctionBids[1][Bid],
+                        "3" => $AuctionBids[2][Bid],
+                        "4" => $AuctionBids[3][Bid],
+                        "5" => $AuctionBids[4][Bid]
+                    ),
+                    "price" => array(
+                        "1" => $AuctionBids[0][Price],
+                        "2" => $AuctionBids[1][Price],
+                        "3" => $AuctionBids[2][Price],
+                        "4" => $AuctionBids[3][Price],
+                        "5" => $AuctionBids[4][Price]
+                    ),
+                    "clicks" => array(
+                        "1" => $phrase[PremiumClicks],
+                        "2" => ceil($phrase[PremiumClicks] * 0.85),
+                        "3" => ceil($phrase[PremiumClicks] * 0.75),
+                        "4" => $phrase[FirstPlaceClicks],
+                        "5" => $phrase[Clicks]
+                    )
+                );
+            }
+
+
+            $bid = array (1,2,3,4,5,7,9,11,14,17,20,25,30,40,50,60,70,80,90, 100, 125, 150, 175, 200, 250,300,350,400,500,600,700,800,900,1000,1500,2000,3000);
+
+
+            $data_bid_sum = array(array(0), array(0), array(0), array(0));
+            foreach ($bid as $bid_min) {
+                $my_click_sum = 0;
+                $my_budget_sum = 0;
+
+                foreach ($data_bid as $phrase_bid) {
+                    //$phrase_bid = $data_bid[0];
+                    $my_cpc = 0;
+                    $my_click = 0;
+                    for ($i_num_pos = 0; $i_num_pos++ < 5;) {
+                        if ($phrase_bid[price][$i_num_pos]<$bid_min&&$my_cpc==0) {
+                            $my_cpc = $phrase_bid[price][$i_num_pos];
+                            $my_click = $phrase_bid[clicks][$i_num_pos];
+                        }
+                    }
+                    $my_click_sum += $my_click;
+                    $my_budget_sum += $my_cpc*$my_click;
+                    $bid_cpc_click = array(
+                        "bid"  => $bid_min,
+                        "cpc"  => $my_cpc,
+                        "click"  => $my_click
+                    );
+                }
+                if ($my_click_sum==0) $my_cpc_sum = 0; else $my_cpc_sum = round($my_budget_sum/$my_click_sum,2);
+
+                $data_bid_sum = array(
+                    array_merge($data_bid_sum[0],array($bid_min)),
+                    array_merge($data_bid_sum[1],array($my_click_sum)),
+                    array_merge($data_bid_sum[2],array($my_budget_sum)),
+                    array_merge($data_bid_sum[3],array($my_cpc_sum))
+                );
+            }
+
+            return array(
+                'phrases' => $newtext[0],
+                'data_bid_sum' => $data_bid_sum,
+                'data_bid' => $data_bid,
+                'bid' => $bid
+            );
+        }
+        //print_r($data);
+
+
+
     }
 }
