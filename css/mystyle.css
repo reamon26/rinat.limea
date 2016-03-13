@@ -60,3 +60,14 @@ body {
 .navbar-main-index{
   margin-bottom: 0px;
 }
+
+.page_header__bg {
+  height: 100%;
+  background: #000 url(/images/background1.jpg) 50% 0/cover no-repeat fixed;
+
+  -webkit-filter: blur(0px);
+  -ms-filter: blur(0px);
+  -moz-filter: blur(0px);
+  -o-filter: blur(0px);
+  filter: blur(0px);
+}

@@ -10,34 +10,30 @@
   <div class="carousel-inner">
 
     <div class="item active">
-      <img src="/images/background1.jpg" alt="...">
+
+      <script src="/js/my.js"></script>
+      <div class="page_header__bg">
+        <!--<img src="/images/background1.jpg" alt="...">-->
+      </div>
       <div class="carousel-caption">
         <h1>Limea.ru</h1>
         <p>самый простой способ проффессионально настроить рекламную кампанию.</p>
         <?
         // Проверяем, пусты ли переменные логина и id пользователя
         if (empty($_SESSION['login']) or empty($_SESSION['id'])) {
-        // Если пусты, то мы не выводим ссылку
-        echo "Вы вошли на сайт, как гость" ?>
+          // Если пусты, то мы не выводим ссылку
+          echo "Вы вошли на сайт, как гость" ?>
           <p><a class="btn btn-lg btn-default" href="#" role="button" data-toggle="modal" data-target="#myModal2">Регистрация</a></p>
-
-
           <?
-
         }
         else {
-        // Если не пусты, то мы выводим ссылку
-        echo "Вы вошли на сайт, как ".$_SESSION['login']."<br><a  href='/cabinet'>Эта ссылка доступна только  зарегистрированным пользователям</a>";
-        ?>
-
+          // Если не пусты, то мы выводим ссылку
+          echo "Вы вошли на сайт, как ".$_SESSION['login']."<br><a  href='/cabinet'>Эта ссылка доступна только  зарегистрированным пользователям</a>";
+          ?>
           <br><br>
           <a    href='/page'>Моя страница</a>|<a    href='/'>Главная страница</a>|<a    href='/all_user'>Список пользователей</a>|<a    href='/exit'>Выход</a><br><br>
-
           <?
-
         }
-
-
         ?>
       </div>
     </div>
