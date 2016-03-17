@@ -59,7 +59,7 @@ class Model_Collect extends Model
 					'GeoID' => $geo
 				);
 				$id_report = $client->call("CreateNewWordstatReport", array("params" => $create_report_params));
-				print_r($id_report);
+				//print_r($id_report);
 
 				//Получение списка отчетов
 				$report_list = $client->call("GetWordstatReportList");
@@ -67,7 +67,7 @@ class Model_Collect extends Model
 				//Проверка на случай, если вдруг будет ошибка в авторизации, чтобы избежать зацикливания.
 				if ($report_list[faultcode]=="SOAP-ENV:58"){
 					echo "<pre>";
-					print_r($report_list);
+					//print_r($report_list);
 					echo "</pre>";
 				} else {
 					//Информация по отчету

@@ -127,37 +127,37 @@ if ($new_CampaignID) {
 
 //Создание отчета
 $create_report_params = array(
-    'Phrases' => array('купить квартиру','купить погода'),
+    'Phrases' => array('купить квартиру', 'купить погода'),
     'GeoID' => array(225)
 );
-$id_report = $client-> call("CreateNewWordstatReport", array("params" => $create_report_params));
+$id_report = $client->call("CreateNewWordstatReport", array("params" => $create_report_params));
 //echo "<br>".print_r($id_report)."<br>";
-echo "faultcode:  \t".$id_report[faultcode]."<br>"; //SOAP-ENV:56
-echo "faultstring:  \t".$id_report[faultstring]."<br>"; //Request limit exceeded
-echo "detail:  \t".$id_report[detail]."<br>"; //The limit for 293129546 is 1000, already requested 1030, request attempt number 2
+echo "faultcode:  \t" . $id_report[faultcode] . "<br>"; //SOAP-ENV:56
+echo "faultstring:  \t" . $id_report[faultstring] . "<br>"; //Request limit exceeded
+echo "detail:  \t" . $id_report[detail] . "<br>"; //The limit for 293129546 is 1000, already requested 1030, request attempt number 2
 
-if ($id_report[faultcode]=="SOAP-ENV:56") {
+if ($id_report[faultcode] == "SOAP-ENV:56") {
     echo "Ошибка, больше 1000 запросов за день";
-} else{
+} else {
 
 }
 
 //Получение списка отчетов
-$report_list = $client-> call("GetWordstatReportList");
+$report_list = $client->call("GetWordstatReportList");
 //echo "<br>report_list_return";
 print_r($report_list);
 //echo "<br>".$report_list[0][0];
-$delete_report_1 = $client-> call("DeleteWordstatReport", array("params" => $id_report));
-if ($delete_report_1 == 1) echo "<br> <br><br>delete report result id=".$id_report;
+$delete_report_1 = $client->call("DeleteWordstatReport", array("params" => $id_report));
+if ($delete_report_1 == 1) echo "<br> <br><br>delete report result id=" . $id_report;
 echo "ok<br>";
 
 //Удаление отчетов по номеру
-$delete_1 = $client-> call("DeleteWordstatReport", array("params" => 99735584));
-$delete_2 = $client-> call("DeleteWordstatReport", array("params" => 99735585));
-$delete_3 = $client-> call("DeleteWordstatReport", array("params" => 99735567));
-$delete_4 = $client-> call("DeleteWordstatReport", array("params" => 99735582));
-$delete_5 = $client-> call("DeleteWordstatReport", array("params" => 99508130));
-echo "<br>delete_report ".print_r($delete_1)."<br>delete_report ".$delete_2."<br>delete_report ".$delete_3."<br>delete_report ".$delete_4."<br>delete_report ".$delete_5."<br>";
+$delete_1 = $client->call("DeleteWordstatReport", array("params" => 99735584));
+$delete_2 = $client->call("DeleteWordstatReport", array("params" => 99735585));
+$delete_3 = $client->call("DeleteWordstatReport", array("params" => 99735567));
+$delete_4 = $client->call("DeleteWordstatReport", array("params" => 99735582));
+$delete_5 = $client->call("DeleteWordstatReport", array("params" => 99508130));
+echo "<br>delete_report " . print_r($delete_1) . "<br>delete_report " . $delete_2 . "<br>delete_report " . $delete_3 . "<br>delete_report " . $delete_4 . "<br>delete_report " . $delete_5 . "<br>";
 
 /*
 //Информация по отчету

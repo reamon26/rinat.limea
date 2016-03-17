@@ -9,7 +9,7 @@ include ("php/db.php");
 $result_token = mysql_query("SELECT token FROM users WHERE login='$_SESSION[login]' AND password='$_SESSION[password]'");
 $myrow_token = mysql_fetch_array($result_token);
 $token = $myrow_token[0];
-
+//echo $token;
 # локаль
 $locale = 'ru';
 # путь к WSDL

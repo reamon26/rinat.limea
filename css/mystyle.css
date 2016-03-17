@@ -71,3 +71,24 @@ body {
   -o-filter: blur(0px);
   filter: blur(0px);
 }
+
+.glyphicon_h1 {
+  font-size: 30px;
+  color: #000;
+  letter-spacing:6px;
+}
+.glyphicon_h1:hover {
+  color: #49d;
+  font-size: 29px;
+}
+
+.glyphicon_h3 {
+  font-size: 25px;
+  color: #000;
+  letter-spacing:6px;
+}
+.glyphicon_h3:hover {
+  color: #49d;
+  font-size: 24px;
+}
+
