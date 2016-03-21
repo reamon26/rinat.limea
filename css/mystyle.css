@@ -92,3 +92,21 @@ body {
   font-size: 24px;
 }
 
+.glyphicon_xs {
+  font-size: 10px;
+  color: #000;
+}
+.glyphicon_xs:hover {
+  color: #49d;
+  font-size: 9px;
+}
+
+.glyphicon_s {
+  font-size: 15px;
+  color: #000;
+}
+.glyphicon_s:hover {
+  color: #49d;
+  font-size: 14px;
+}
+

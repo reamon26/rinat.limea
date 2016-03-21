@@ -43,8 +43,11 @@ class Model_Collect extends Model
 			$i_N_10=0;
 
 			//проверка на ввод ГЕО, по умолчанию весь мир.
-			if ((isset($_POST[request_new_get_ws_geo]))&&($_POST[request_new_get_ws_geo]!=""))
-				$geo = explode(",",$_POST[request_new_get_ws_geo]);
+			//echo "1) ".$_POST[request_new_get_ws_geo];
+			//echo "2) ".$_POST[request_new_get_ws_geo_1];
+
+			if ((isset($_POST[request_new_get_ws_geo_1]))&&($_POST[request_new_get_ws_geo_1]!=""))
+				$geo = explode(",",$_POST[request_new_get_ws_geo_1]);
 			else $geo =array(225);
 
 			//проверка на частоту, по умолчанию 0.
@@ -90,17 +93,23 @@ class Model_Collect extends Model
 
 					//Получение информации по отчету
 					$text_report = $client->call("GetWordstatReport", array("params" => $id_report));
-					$i_N = 1;
 
 					//Запись в файл
 					//Нужно будет заменить на сохранение в базу данных
-					foreach ($text_report as $keywords) {
-						foreach ($keywords[SearchedWith] as $keywords_one) {
+					foreach ($text_report as  $n_kw => $keywords) {
+						if ($n_kw!=(count($text_report)-1)){
+							$buf = $keywords[SearchedWith];
+							array_splice($buf,0,1);
+							$text_report[$n_kw][SearchedWith]=$buf;
+						}
+					}
+
+					foreach ($text_report as  $n_kw => $keywords) {
+						foreach ($keywords[SearchedWith] as $n_kw_1 => $keywords_one) {
 							if ($keywords_one[Shows]>$freq){
 								fputcsv($fp, array(mb_convert_encoding($keywords_one[Phrase], 'WINDOWS-1251', 'UTF-8'), $keywords_one[Shows]), $delimiter = ";");
 							}
 						}
-						$i_N++;
 					}
 					//Удаление отчета
 					$delete_report_1 = $client->call("DeleteWordstatReport", array("params" => $id_report));
@@ -111,7 +120,6 @@ class Model_Collect extends Model
 			}
 			fclose($fp);
 		}
-
 		return $text_report_all;
 	}
 }
